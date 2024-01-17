@@ -16,6 +16,7 @@ FROM node:21 as builder
 WORKDIR /app
 
 RUN git clone https://github.com/pocketbase/pocketbase .
+# Todo: checkout at release
 COPY 0001-fix-apply-header-name-fix.patch .
 RUN git apply 0001-fix-apply-header-name-fix.patch
 RUN npm --prefix=./ui install && npm --prefix=./ui run build
