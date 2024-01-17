@@ -1,0 +1,41 @@
+From fe0e8eea6587afdec89fe83290366272a091a85f Mon Sep 17 00:00:00 2001
+From: Thijs Miedema <thijs.miedema@alliander.com>
+Date: Wed, 17 Jan 2024 12:00:23 +0100
+Subject: [PATCH] fix: apply header name fix
+
+---
+ ui/.env                   | 2 +-
+ ui/src/utils/ApiClient.js | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/ui/.env b/ui/.env
+index 9b2bafc5..d7bd67da 100644
+--- a/ui/.env
++++ b/ui/.env
+@@ -1,5 +1,5 @@
+ # all environments should start with 'PB_' prefix
+-PB_BACKEND_URL         = "../"
++PB_BACKEND_URL         = "/"
+ PB_INSTALLER_PARAM     = "installer"
+ PB_OAUTH2_EXAMPLE      = "https://pocketbase.io/docs/authentication/#oauth2-integration"
+ PB_RULES_SYNTAX_DOCS   = "https://pocketbase.io/docs/api-rules-and-filters/"
+diff --git a/ui/src/utils/ApiClient.js b/ui/src/utils/ApiClient.js
+index 50e1e23c..8c5d63a2 100644
+--- a/ui/src/utils/ApiClient.js
++++ b/ui/src/utils/ApiClient.js
+@@ -126,6 +126,12 @@ const pb = new PocketBase(
+     new AppAuthStore("pb_admin_auth")
+ );
+ 
++pb.beforeSend = function (url, options) {
++    options.headers["X-Authorization"] = options.headers["Authorization"]
++    delete options.headers["Authorization"];
++    return { url, options };
++};
++
+ if (pb.authStore.model && !pb.authStore.model.collectionId) { // not an auth record
+     setAdmin(pb.authStore.model);
+ }
+-- 
+2.34.1
+
